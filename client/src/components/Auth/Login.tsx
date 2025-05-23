@@ -96,6 +96,22 @@ function Login() {
           </a>
         </p>
       )}
+      <button
+        type="button"
+        style={{
+          marginTop: '1em',
+          background: '#0057B8',
+          color: 'white',
+          padding: '10px 20px',
+          border: 'none',
+          borderRadius: '4px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+        }}
+        onClick={() => (window.location.href = '/api/auth/bitrix')}
+      >
+        Mit Bitrix anmelden
+      </button>
     </>
   );
 }

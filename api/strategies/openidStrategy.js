@@ -147,6 +147,8 @@ async function setupOpenId() {
         try {
           logger.info(`[openidStrategy] verify login openidId: ${userinfo.sub}`);
           logger.debug('[openidStrategy] very login tokenset and userinfo', { tokenset, userinfo });
+          logger.debug('[openidStrategy] raw userinfo structure:', 
+  JSON.stringify(userinfo, null, 2));
 
           let user = await findUser({ openidId: userinfo.sub });
           logger.info(

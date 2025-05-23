@@ -1,6 +1,9 @@
 const axios = require('axios');
 const User = require('~/models/User');
 const crypto = require('crypto');
+const { setAuthTokens } = require('~/server/services/AuthService');
+const { generate2FATempToken } = require('~/server/services/twoFactorService');
+const { logger } = require('~/config');
 
 exports.startOAuth = async (req, res) => {
   const bitrixDomain = process.env.BITRIX_DOMAIN;
@@ -47,12 +50,21 @@ exports.handleCallback = async (req, res) => {
       await user.save();
     }
 
-    req.login(user, (err) => {
-      if (err) return res.redirect('/?error=bitrix_login');
-      res.redirect('/');
-    });
+    // Hier beginnen die Änderungen:
+    
+    // 2FA-Prüfung
+    if (user.twoFactorEnabled) {
+      const tempToken = generate2FATempToken(user._id);
+      return res.redirect(`/login?twoFAPending=true&tempToken=${tempToken}`);
+    }
+
+    // JWT-Token setzen statt Session
+    await setAuthTokens(user._id, res);
+    
+    // Zum Dashboard weiterleiten
+    return res.redirect('/');
   } catch (e) {
-    console.error('[Bitrix OAuth]', e);
+    logger.error('[Bitrix OAuth]', e);
     res.redirect('/?error=bitrix_oauth');
   }
 };

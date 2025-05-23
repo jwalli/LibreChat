@@ -29,6 +29,10 @@ const {
   validateRegistration,
   validatePasswordReset,
 } = require('~/server/middleware');
+const {
+  startOAuth: bitrixStartOAuth,
+  handleCallback: bitrixHandleCallback,
+} = require('~/server/controllers/auth/BitrixController');
 
 const router = express.Router();
 
@@ -68,5 +72,7 @@ router.post('/2fa/verify-temp', checkBan, verify2FAWithTempToken);
 router.post('/2fa/confirm', requireJwtAuth, confirm2FA);
 router.post('/2fa/disable', requireJwtAuth, disable2FA);
 router.post('/2fa/backup/regenerate', requireJwtAuth, regenerateBackupCodes);
+router.get('/bitrix', bitrixStartOAuth);
+router.get('/bitrix/callback', bitrixHandleCallback);
 
 module.exports = router;
